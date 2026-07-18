@@ -7,7 +7,6 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PARENT="$(dirname "$ROOT")"
 LIB_LINK="$PARENT/rl-harness"
 LIB_SPACED="$PARENT/RL Harness"
-LIB_CLONE="$PARENT/rl-harness"
 LIBRARY_URL="${RL_HARNESS_URL:-https://github.com/Al-does/RL-Harness.git}"
 
 echo "==> experiment repo: $ROOT"
@@ -22,8 +21,8 @@ elif [ -d "$LIB_SPACED/.git" ]; then
   ln -s "RL Harness" "$LIB_LINK"
 else
   echo "==> cloning $LIBRARY_URL"
-  echo "    into     $LIB_CLONE"
-  git clone "$LIBRARY_URL" "$LIB_CLONE"
+  echo "    into     $LIB_LINK"
+  git clone "$LIBRARY_URL" "$LIB_LINK"
 fi
 
 if ! command -v uv >/dev/null 2>&1; then
@@ -44,6 +43,5 @@ echo
 echo "  Run the example smoke experiment:"
 echo "    uv run rl-harness experiments.example_study.smoke.experiment --smoke"
 echo
-echo "  Rename this repo (or use GitHub 'Use this template') for your own science."
-echo "  Library edits belong in $LIB_LINK (branch + PR)."
-echo "  Experiment edits belong in this repo."
+echo "  Science commits: push to YOUR fork of rl-experiments (not a rename)."
+echo "  Library PRs:     work in $LIB_LINK and open a PR to rl-harness."
