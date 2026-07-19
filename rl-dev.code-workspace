@@ -1,0 +1,13 @@
+{
+  "folders": [
+    {
+      "name": "rl-experiments",
+      "path": "rl-experiments"
+    },
+    {
+      "name": "rl-harness",
+      "path": "rl-harness"
+    }
+  ],
+  "settings": {}
+}

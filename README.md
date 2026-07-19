@@ -62,6 +62,40 @@ clones `rl-harness` beside it automatically. You do not rename anything.
 
 Requires [uv](https://docs.astral.sh/uv/) and Python 3.13+.
 
+## Open both repos in one Cursor / VS Code window
+
+Day-to-day you will edit science here and reusable code in `../rl-harness`.
+Use a **multi-root workspace** so both appear in one window.
+
+**Option A — workspace file (recommended)**
+
+After bootstrap, from the parent directory that contains both folders:
+
+```bash
+# parent/
+#   rl-harness/
+#   rl-experiments/    # your fork
+```
+
+Create `rl-dev.code-workspace` next to them (this repo ships an example you can
+copy up one level):
+
+```bash
+cp rl-experiments/rl-dev.code-workspace .
+# edit paths if your folder names differ, then:
+cursor rl-dev.code-workspace
+# or: File → Open Workspace from File… → rl-dev.code-workspace
+```
+
+**Option B — add folder manually**
+
+1. Open your `rl-experiments` fork in Cursor.
+2. **File → Add Folder to Workspace…** and select the sibling `rl-harness`.
+3. **File → Save Workspace As…** so you can reopen both later.
+
+Either way you get two roots in the sidebar (experiments + library) without
+juggling windows.
+
 ## Stay on library `main`
 
 ```bash
