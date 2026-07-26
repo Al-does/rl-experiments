@@ -141,6 +141,21 @@ Boxes clone **your fork** (results push target) and `rl-harness` as siblings.
 Point provisioning at your fork’s URL. Details:
 [`rl-harness` vast README](https://github.com/Al-does/RL-Harness/blob/main/devops/vast/README.md).
 
+## RunPod Pods (optional)
+
+The sibling harness also supports on-demand, non-interruptible Community Cloud
+Pods without SSH. Configure `RUNPOD_API_KEY` and `GH_TOKEN`, plus `B2_*` when
+checkpoints must survive teardown. Always exercise the dry run first:
+
+```bash
+uv run python -m devops.runpod.pods.provision up \
+  --run "rl-harness experiments.<study>.<condition>.experiment --upload-artifacts" \
+  --forward-b2 --self-destruct --dry-run
+```
+
+See the
+[`rl-harness` RunPod runbook](https://github.com/Al-does/RL-Harness/tree/main/devops/runpod/pods).
+
 ## More architecture detail
 
 Once you are set up, the library docs are the deep reference:
