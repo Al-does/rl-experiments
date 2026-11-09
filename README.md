@@ -28,6 +28,12 @@ clones `rl-harness` beside it automatically. You do not rename anything.
 
 ## Fork and set up
 
+Requires [uv](https://docs.astral.sh/uv/) and Python **3.13**. The checked-in
+`.python-version` selects that interpreter for uv (which downloads it if needed);
+`requires-python = ">=3.13,<3.14"` keeps installation on the supported minor
+version while allowing patch updates. Python selection is independent of any
+optional JAX CPU/CUDA dependencies.
+
 1. **Fork** this repository on GitHub (your copy keeps the name
    `rl-experiments` — no rename).
 2. Clone *your* fork:
@@ -52,15 +58,28 @@ clones `rl-harness` beside it automatically. You do not rename anything.
      rl-experiments/    # your fork (science lives here)
    ```
 
-4. Smoke-check the wiring:
+4. Smoke-check the RLlib/PyTorch wiring on CPU:
 
    ```bash
-   uv run rl-harness experiments.example_study.smoke.experiment --smoke
+   uv run --locked rl-harness experiments.example_study.smoke.experiment --smoke
    ```
 
 5. Replace `experiments/example_study/` with your own studies.
 
-Requires [uv](https://docs.astral.sh/uv/) and Python 3.13+.
+### Verify the setup
+
+From this repo, with the sibling harness checkout in place:
+
+```bash
+uv sync --locked --group dev
+uv run --locked python --version
+uv run --locked pytest -q -m "not slow"
+```
+
+The interpreter should report Python 3.13.x. If you intentionally change
+dependencies or update the sibling harness's dependency declarations, run
+`uv lock` to regenerate `uv.lock`, then repeat the checks and smoke run above.
+Commit the regenerated lockfile with the dependency changes.
 
 ## Open both repos in one Cursor / VS Code window
 
