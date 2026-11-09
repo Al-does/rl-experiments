@@ -138,7 +138,10 @@ uv run --group devops python -m devops.vast.provision up -n 1 --dry-run
 ```
 
 Boxes clone **your fork** (results push target) and `rl-harness` as siblings.
-Point provisioning at your fork’s URL. Details:
+Run provisioning from your fork checkout; the clone URL comes from its `origin`.
+Override with `--experiment-repo-url URL` (plus `--branch` outside a checkout).
+The dry run prints clone and publication targets. Vast publishes compact results
+to the launch branch (or `--results-branch`). Details:
 [`rl-harness` vast README](https://github.com/Al-does/RL-Harness/blob/main/devops/vast/README.md).
 
 ## RunPod Pods (optional)
