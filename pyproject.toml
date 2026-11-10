@@ -17,6 +17,9 @@ where = ["."]
 include = ["experiments*"]
 namespaces = true
 
+[tool.uv]
+default-groups = ["dev", "jax"]
+
 [tool.uv.sources]
 # Bootstrap clones/links the library beside this repo as ../rl-harness.
 rl-harness = { path = "../rl-harness", editable = true }
@@ -30,4 +33,12 @@ dev = [
 ]
 devops = [
     "vastai>=0.2.0",
+]
+jax = [
+    "jax==0.11.1",
+    "optax==0.2.8",
+]
+jax-cuda = [
+    { include-group = "jax" },
+    "jax[cuda13]==0.11.1; sys_platform == 'linux'",
 ]

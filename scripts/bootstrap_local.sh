@@ -31,8 +31,8 @@ if ! command -v uv >/dev/null 2>&1; then
 fi
 
 cd "$ROOT"
-echo "==> uv sync --group dev (editable rl-harness from $LIB_LINK)"
-uv sync --group dev
+echo "==> uv sync (default dev + CPU JAX/Optax; editable rl-harness from $LIB_LINK)"
+uv sync
 
 echo
 echo "Ready."
@@ -42,6 +42,9 @@ echo "    git -C \"$LIB_LINK\" pull"
 echo
 echo "  Run the example smoke experiment:"
 echo "    uv run rl-harness experiments.example_study.smoke.experiment --smoke"
+echo
+echo "  Check JAX devices:"
+echo "    uv run python -c 'import jax; print(jax.devices())'"
 echo
 echo "  Science commits: push to YOUR fork of rl-experiments (not a rename)."
 echo "  Library PRs:     work in $LIB_LINK and open a PR to rl-harness."
