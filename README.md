@@ -11,10 +11,11 @@ This is a composition-first harness for reproducible RL research.
 - The secondary goal is careful tracking of experimental results and
   reproducibility — down to commit and seed.
 
-It is built on RLlib, so you inherit its scalability and pre-built features,
-while still composing most RL concepts for fast experiment design and
-prototyping. Optional [vast.ai](https://vast.ai) tooling is available if you
-have an API key, for cheaper parallel GPU runs.
+It supports both pure-JAX/Optax experiments and RLlib/PyTorch recipes. JAX is
+installed by default on CPU; RLlib provides scalability and pre-built features
+alongside it. Compose existing RL concepts for fast experiment design and
+prototyping. Optional [vast.ai](https://vast.ai) tooling is available if you have
+an API key, for cheaper parallel GPU runs.
 
 Under the hood there are two git repositories:
 
@@ -31,8 +32,8 @@ clones `rl-harness` beside it automatically. You do not rename anything.
 Requires [uv](https://docs.astral.sh/uv/) and Python **3.13**. The checked-in
 `.python-version` selects that interpreter for uv (which downloads it if needed);
 `requires-python = ">=3.13,<3.14"` keeps installation on the supported minor
-version while allowing patch updates. Python selection is independent of any
-optional JAX CPU/CUDA dependencies.
+version while allowing patch updates. Python selection is independent of the
+JAX CPU/CUDA dependency selection.
 
 1. **Fork** this repository on GitHub (your copy keeps the name
    `rl-experiments` — no rename).
@@ -44,7 +45,8 @@ optional JAX CPU/CUDA dependencies.
    ```
 
 3. Bootstrap — clones [`rl-harness`](https://github.com/Al-does/RL-Harness)
-   beside this repo if needed, then editable-installs it:
+   beside this repo if needed, then editable-installs it together with CPU JAX,
+   Optax, RLlib/PyTorch, and the development tools:
 
    ```bash
    ./scripts/bootstrap_local.sh
@@ -71,7 +73,7 @@ optional JAX CPU/CUDA dependencies.
 From this repo, with the sibling harness checkout in place:
 
 ```bash
-uv sync --locked --group dev
+uv sync --locked
 uv run --locked python --version
 uv run --locked pytest -q -m "not slow"
 ```
@@ -80,6 +82,46 @@ The interpreter should report Python 3.13.x. If you intentionally change
 dependencies or update the sibling harness's dependency declarations, run
 `uv lock` to regenerate `uv.lock`, then repeat the checks and smoke run above.
 Commit the regenerated lockfile with the dependency changes.
+
+### JAX: CPU by default, CUDA opt-in
+
+Bootstrap, plain `uv sync`, and plain `uv run` include the `dev` and `jax`
+dependency groups. The `jax` group pins JAX/JAXlib 0.11.1 and Optax 0.2.8,
+matching the Python 3.13 stack used in `alex-rl-experiments`. No extra install
+step is needed for CPU JAX. Check device discovery and execute a compiled
+operation:
+
+```bash
+uv run --locked python - <<'PY'
+import jax
+import jax.numpy as jnp
+import optax
+
+print("JAX", jax.__version__, "Optax", optax.__version__, jax.devices())
+print(jax.jit(lambda x: x @ x)(jnp.eye(2)).block_until_ready())
+PY
+```
+
+On Linux NVIDIA GPU machines with a CUDA 13-compatible driver, select the
+`jax-cuda` group. It includes the same JAX/Optax stack plus the CUDA 13 plugin
+and CUDA libraries; it does not change Python:
+
+```bash
+uv sync --locked --group jax-cuda
+uv run --locked --group jax-cuda python -c \
+  'import jax; print(jax.devices()); assert jax.default_backend() == "gpu"'
+```
+
+Keep `--group jax-cuda` on subsequent `uv run` commands for GPU recipes.
+CUDA dependencies are Linux-only; macOS and Windows keep CPU JAX. The current
+harness Vast bootstrap selects `jax-cuda` automatically, so the starter now
+provides the group it expects. Remote `--run` commands execute in that synced
+environment; no manual install or extra `uv sync` is needed.
+
+The default test suite exercises JIT compilation, automatic differentiation,
+an Optax optimizer update, and vectorized seeded sampling, in addition to the
+RLlib recipe import check. The RLlib smoke command above executes PPO training
+independently of the JAX checks.
 
 ## Open both repos in one Cursor / VS Code window
 
